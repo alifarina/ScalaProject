@@ -28,11 +28,11 @@ class SimpleSQL extends QueryBuilder {
     this
   }
 
-  override def build(): mutable.HashMap[String, List[List[String]]] = {
+  override def build(): Boolean = {
     val valueMap = new mutable.HashMap[String, List[List[String]]]()
     valueMap(tableName) = List(values)
     println(valueMap)
-    valueMap
+    true
   }
 
 

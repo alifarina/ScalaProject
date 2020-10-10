@@ -17,6 +17,6 @@ abstract class QueryBuilder {
 
   def useMap(mapOfTableNameColums: mutable.HashMap[String, List[String]]): QueryBuilder
 
-  def build() : mutable.HashMap[String,List[List[String]]]
+  def build() : Boolean
 
 }
