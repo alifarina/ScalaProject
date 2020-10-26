@@ -25,7 +25,7 @@ class CreateTable(val tableName : String, val listOfColumns : List[String]) {
       println("| "+x+" |")
       println("----------------")
     }
-    return   StateObjects.tableToColMap
+       StateObjects.tableToColMap
   }
 
   def insert(): Unit ={
