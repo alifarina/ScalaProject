@@ -2,7 +2,7 @@ package UI
 
 import java.awt.Color
 
-import Functional.FarinaMainClass
+import Functional.SqlMethodsClass
 import javax.swing.BorderFactory
 
 import scala.swing._
@@ -60,7 +60,7 @@ class CreateTableScreenPanel {
           columnEntryPanel.contents.remove(columnCount - 1)
         }else if(b.text == "CREATE"){
           val tabelName =tableNameTextBox.peer.getText()
-         val result=FarinaMainClass.createTableOrThrow(tabelName, List())
+         val result=SqlMethodsClass.createTableOrThrow(tabelName, List())
            result match {
              case Right(x) => errorView.peer.setText(result.right.get)
              case Left(x) =>  errorView.peer.setText(result.left.get.getMessage)

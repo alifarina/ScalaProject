@@ -8,10 +8,12 @@ class SimpleSQL extends QueryBuilder {
   override var tableName: String = ""
   override var columns: List[String] = _
   override var values: List[String] = _
-  override var hasmapSimple: mutable.HashMap[String, List[List[String]]] = _
+  override var hashMapData: mutable.HashMap[String, List[List[String]]] = _
+  override var hashMapColumns: mutable.HashMap[String, List[String]] = _
 
-  override def useMap(mapOfTableNameColums: mutable.HashMap[String, List[List[String]]]): QueryBuilder = {
-    this.hasmapSimple = mapOfTableNameColums;
+  override def useMap(mapOfTableNameValues: mutable.HashMap[String, List[List[String]]],mapOfTableNameColumns: mutable.HashMap[String, List[String]]): QueryBuilder = {
+    this.hashMapData = mapOfTableNameValues;
+    this.hashMapColumns=mapOfTableNameColumns
     this
   }
 
@@ -30,17 +32,41 @@ class SimpleSQL extends QueryBuilder {
     this
   }
 
-  override def build(): Boolean = {
+  override def add(): Boolean = {
 //    val valueMap = new mutable.HashMap[String, List[List[String]]]()
-    if(hasmapSimple.size>0){
-      hasmapSimple(tableName)+: List(values)
+    if(hashMapData.size>=1){
+      var lst=hashMapData(tableName)
+      lst=lst.appendedAll(List(values))
+      hashMapData(tableName)=lst
     }else{
-      hasmapSimple(tableName) = List(values)
+      hashMapData(tableName) = List(values)
     }
 
-    println(hasmapSimple)
+    println(hashMapData)
     true
   }
 
+  override def selectAll(): List[List[String]] = {
+    if(columns(0)=="*"){
+      return hashMapData(tableName)
+    }
+    else {
+      var columnIndexes=List[Int]()
+      val allColumns=hashMapColumns(tableName)
+      columns.foreach((item)=>{
+        val indx=allColumns.indexOf(item)
+        if(indx!=(-1)){
+          columnIndexes::=indx
+        }
+      })
+      return hashMapData(tableName).map(x=>columnIndexes.reverse.map((i)=> {
+        x(i)
+      }))
+    }
+  }
+
+  override def selectAllWithFilter(): List[List[String]] = {
+    return hashMapData(tableName)
+  }
 
 }

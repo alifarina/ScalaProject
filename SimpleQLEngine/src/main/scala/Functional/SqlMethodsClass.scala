@@ -1,9 +1,11 @@
+package Functional
+
 import Errors.GeneralException
 import Utils.{AppUtils, StateObjects}
 
 import scala.util.Either
 
-object FarinaMainClass {
+object SqlMethodsClass {
 
   def main(args: Array[String]): Unit = {
     val tableName = "Student"
@@ -15,12 +17,20 @@ object FarinaMainClass {
     //println("query >>>", query(tableName).map(x=>columnIndex.map(i=>x(i))).filter(x=>x.contains("Farina Ali")))
     println(createTableOrThrow("Student", columnNames))
     println(processQuery("insert into Student (name,department,email) values (FarinaAli,IMcE5,farina17ali@gmail.com)"))
-    
+    println(processQuery("insert into Student (name,department,email) values (FarinaLalAli,IMcE5,farinaLal17ali@gmail.com)"))
+    val columnN = List("email","name")
+    println(selectAllOrThrow("Student", columnN))
     //val columns= StateObjects.tableToColMap(tableName);
     //println(StateObjects.tableToValueMap.keys)
     //val range=0.until(columns.length)
     //StateObjects.tableToValueMap(tableName).map(x=>range.map((i)=> println(x(i))))
 
+  }
+
+  def selectAllOrThrow(tableName: String,columnNames: List[String])={
+    val query = new SimpleSQL().useTable(tableName).inColumns(columnNames).
+      useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).selectAll()
+    print(query)
   }
 
   // adding error handling
@@ -39,7 +49,7 @@ object FarinaMainClass {
     // let values be
     if (AppUtils.isValidString(tableName) && colNames.size > 0 && values.size > 0 && colNames.size == values.size) {
       val query = new SimpleSQL().useTable(tableName).inColumns(colNames).withValues(values).
-        useMap(StateObjects.tableToValueMap).build()
+        useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).add()
       if (query) Right("query successfully executed!")
       else Left(new GeneralException("Failed to insert"))
 
