@@ -1,5 +1,7 @@
 package UI
 
+import java.awt.Dimension
+
 import scala.swing._
 
 class MainScreenPanel {
@@ -7,7 +9,7 @@ class MainScreenPanel {
     def constraints(x: Int, y: Int,
                     gridwidth: Int = 1, gridheight: Int = 1,
                     weightx: Double = 0.0, weighty: Double = 0.0,
-                    fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.None)
+                    fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.Both)
     : Constraints = {
       val c = new Constraints
       c.gridx = x
@@ -36,7 +38,9 @@ class MainScreenPanel {
     reactions+={
       case event.ButtonClicked(b) =>{
         if(b.text=="Create Table"){
-          add(new CreateTableScreenPanel().ReturnPanel(),constraints(0,3,gridwidth=8,gridheight = 10 ,fill=GridBagPanel.Fill.Horizontal))
+          if(_contents.length>4)
+            _contents.remove(_contents.length-1)
+          add(new CreateTableScreenPanel().ReturnPanel(),constraints(0,3,gridwidth=80,gridheight = 100 ,fill=GridBagPanel.Fill.Horizontal))
           repaint()
           revalidate()
         }
@@ -44,11 +48,13 @@ class MainScreenPanel {
           println(_contents.length)
           if(_contents.length>4)
           _contents.remove(_contents.length-1)
+          add(new ViewTablePanel().ReturnPanel(),constraints(0,3,gridwidth=8,gridheight = 10 ,fill=GridBagPanel.Fill.Horizontal))
           repaint()
           revalidate()
         }
       }
     }
+    preferredSize=new Dimension(500,500)
     //CreateTableScreenPanel
   }
 

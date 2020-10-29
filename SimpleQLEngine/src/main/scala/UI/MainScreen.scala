@@ -16,8 +16,9 @@ class MainScreen {
 //        }
 //      }
 //    }
-    pack()
-    centerOnScreen()
+    size=new Dimension(500,500)
+    //pack()
+    //centerOnScreen()
     open()
   }
   def returnFrame():Frame={

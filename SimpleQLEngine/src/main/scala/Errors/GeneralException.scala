@@ -1,5 +1,4 @@
 package Errors
 
-class GeneralException(message : String) extends Exception{
-
+class GeneralException(message : String) extends Exception(message){
 }
