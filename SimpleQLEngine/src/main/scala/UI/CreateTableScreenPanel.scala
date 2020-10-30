@@ -18,7 +18,7 @@ class CreateTableScreenPanel {
     def constraints(x: Int, y: Int,
                     gridwidth: Int = 1, gridheight: Int = 1,
                     weightx: Double = 0.0, weighty: Double = 0.0,
-                    fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.None)
+                    fill: GridBagPanel.Fill.Value = GridBagPanel.Fill.None, ipadx: Int=0, ipady: Int=0)
     : Constraints = {
       val c = new Constraints
       c.gridx = x
@@ -28,6 +28,8 @@ class CreateTableScreenPanel {
       c.weightx = weightx
       c.weighty = weighty
       c.fill = fill
+      c.ipadx=ipadx
+      c.ipady=ipady
       c
     }
 
@@ -52,11 +54,11 @@ class CreateTableScreenPanel {
     add(errorView, constraints(0, 11, gridwidth = 2, fill = GridBagPanel.Fill.Horizontal))
     val columnEntryPanel = new GridPanel(1, 1) // make it 1,2 later and add datatypes dropdown
     columnEntryPanel.border = BorderFactory.createBevelBorder(5)
-    add(columnEntryPanel, constraints(0, 5, gridwidth = 1, gridheight = 4, fill = GridBagPanel.Fill.Horizontal))
+    add(columnEntryPanel, constraints(0, 5, gridwidth = 5, gridheight = 4, fill = GridBagPanel.Fill.Both,ipadx = 5))
     reactions += {
       case event.ButtonClicked(b) =>
         if (b.text == "Add Column") {
-          val textCoumnName = new TextField(15)
+          val textCoumnName = new TextField(30)
           addColumnsList.add(textCoumnName)
           columnEntryPanel.rows=columnEntryPanel.rows+1
           columnEntryPanel.contents.addOne(textCoumnName)

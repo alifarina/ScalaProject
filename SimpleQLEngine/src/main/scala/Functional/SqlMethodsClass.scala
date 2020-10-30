@@ -1,5 +1,6 @@
 package Functional
 
+import Common.HelperMethods
 import Errors.GeneralException
 import Utils.{AppUtils, StateObjects}
 
@@ -27,10 +28,19 @@ object SqlMethodsClass {
 
   }
 
-  def selectAllOrThrow(tableName: String, columnNames: List[String]) = {
-    val query = new SimpleSQL().useTable(tableName).inColumns(columnNames).
-      useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).selectAll()
-    print(query)
+  def selectAllOrThrow(tableName: String, columnNames: List[String]): Either[GeneralException,List[List[String]]] = {
+    try{
+      val query = new SimpleSQL().useTable(tableName).inColumns(columnNames).
+        useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).selectAll()
+      print(query)
+      Right(query)
+    }
+    catch {
+      case _ =>Left(new GeneralException("Error in fetching table "))
+    }
+
+
+
   }
 
   def showTableSchema(tableName: String): Either[GeneralException,List[String]] = {
@@ -38,7 +48,26 @@ object SqlMethodsClass {
       Left(new GeneralException("Table not found or name empty"))
     }else {
       //Todo : call select here in Right and return List
+
       Right(StateObjects.tableToColMap(tableName))
+    }
+
+  }
+
+  def getTableHtmlString(tableName: String,columnNames: List[String]):Either[GeneralException, String]={
+
+    val tableEntries=selectAllOrThrow(tableName,columnNames)
+    if(tableEntries.isRight){
+      val htmlstring=HelperMethods.returnTableHtml(tableEntries.right.get)
+      if(htmlstring!=""){
+        Right(htmlstring)
+      }
+      else{
+        Left(new GeneralException("Table not found"))
+      }
+    }
+    else{
+      Left(new GeneralException("Table not found"))
     }
 
   }

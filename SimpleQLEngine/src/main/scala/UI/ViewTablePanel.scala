@@ -1,10 +1,9 @@
 package UI
 
-import java.awt.{Color, GridBagConstraints}
+import java.awt.Color
 
 import Functional.SqlMethodsClass
-import javax.swing.text.JTextComponent
-import javax.swing.{BorderFactory, JLabel}
+import javax.swing.BorderFactory
 
 import scala.swing._
 
@@ -29,7 +28,7 @@ class ViewTablePanel {
     val title = new Label("View Table")
     val tableNameLabel = new Label("Enter Table Name")
     val tableNameTextBox = new TextField()
-    val showTable = new Button("Show Schema")
+    val showTable = new Button("Show Table")
     listenTo(showTable)
     //column,row
     add(title, constraints(3, 0, gridwidth = 1, fill = GridBagPanel.Fill.Horizontal))
@@ -38,7 +37,7 @@ class ViewTablePanel {
     add(showTable, constraints(0, 3, gridwidth = 2, fill = GridBagPanel.Fill.Horizontal))
     val columnEntryPanel = new GridPanel(1, 1) // make it 1,2 later and add datatypes dropdown
     columnEntryPanel.border = BorderFactory.createBevelBorder(5)
-    add(columnEntryPanel, constraints(0, 5, gridwidth = 1, gridheight = 4, fill = GridBagPanel.Fill.Horizontal))
+    add(columnEntryPanel, constraints(0, 5, gridwidth = 4, gridheight = 4, fill = GridBagPanel.Fill.Vertical))
 
     def displayTable(tableName : String,list: List[String]):String = {
       var builder = new StringBuilder("")
@@ -55,7 +54,7 @@ class ViewTablePanel {
 
     reactions += {
       case event.ButtonClicked(b) =>
-        if (b.text == "Show Schema") {
+        if (b.text == "Show Table") {
           val label = new Label("Count: ")
           val c2 = new Constraints()
           c2.gridx = 20
@@ -63,10 +62,10 @@ class ViewTablePanel {
           c2.weightx = 0.5
           add(label, c2)
           val tableName = tableNameTextBox.peer.getText()
-
-          val schema=SqlMethodsClass.showTableSchema(tableName)
-          schema match {
-            case Right(x) => {label.peer.setText("<html>"+displayTable(tableName,x)+"</html>")}
+          val columnN = List("*")
+          val htmlString=SqlMethodsClass.getTableHtmlString(tableName,columnN)
+          htmlString match {
+            case Right(x) => {label.peer.setText("<html>"+x+"</html>")}
             case Left(x) =>  label.peer.setText(x.getMessage)
           }
           columnEntryPanel.rows=columnEntryPanel.rows+1
