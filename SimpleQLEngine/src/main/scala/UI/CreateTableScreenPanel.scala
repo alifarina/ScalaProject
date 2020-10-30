@@ -1,13 +1,19 @@
 package UI
 
 import java.awt.Color
+import java.util
 
 import Functional.SqlMethodsClass
+import Functional.SqlMethodsClass.processQuery
 import javax.swing.BorderFactory
 
-import scala.swing._
+import scala.swing.{TextField, _}
 
 class CreateTableScreenPanel {
+
+  var addColumnsList = new util.ArrayList[TextField]()
+  var columnNames = List[String]()
+
   val panel = new GridBagPanel {
     def constraints(x: Int, y: Int,
                     gridwidth: Int = 1, gridheight: Int = 1,
@@ -51,6 +57,7 @@ class CreateTableScreenPanel {
       case event.ButtonClicked(b) =>
         if (b.text == "Add Column") {
           val textCoumnName = new TextField(15)
+          addColumnsList.add(textCoumnName)
           columnEntryPanel.rows=columnEntryPanel.rows+1
           columnEntryPanel.contents.addOne(textCoumnName)
         }
@@ -60,10 +67,17 @@ class CreateTableScreenPanel {
           columnEntryPanel.contents.remove(columnCount - 1)
         }else if(b.text == "CREATE"){
           val tabelName =tableNameTextBox.peer.getText()
-         val result=SqlMethodsClass.createTableOrThrow(tabelName, List())
+         addColumnsList.forEach(tf => {
+           columnNames::=tf.peer.getText()
+         })
+          println("All added columns >>> ",columnNames)
+         val result=SqlMethodsClass.createTableOrThrow(tabelName, columnNames.reverse)
            result match {
-             case Right(x) => errorView.peer.setText(result.right.get)
-             case Left(x) =>  errorView.peer.setText(result.left.get.getMessage)
+             case Right(x) => {errorView.peer.setText(x)
+               println(processQuery("insert into Student (name,department,email) values (FarinaAli,IMcE5,farina17ali@gmail.com)"))
+               println(processQuery("insert into Student (name,department,email) values (FarinaLalAli,IMcE5,farinaLal17ali@gmail.com)"))
+             }
+             case Left(x) =>  errorView.peer.setText(x.getMessage)
            }
 
 
@@ -75,7 +89,7 @@ class CreateTableScreenPanel {
 
   def ReturnPanel(): Panel = {
     panel.border=BorderFactory.createLineBorder(Color.BLACK,1)
-    return panel
+    panel
   }
 
   def removePanelFromPanel(p: Panel): Unit = {

@@ -24,7 +24,8 @@ class MainScreenPanel {
     val title = new Label("Main Menu")
     val createTableButton = new Button("Create Table")
     val viewTablesButton = new Button("View Tables")
-    val insertDataButton = new Button("Insert Data")
+    val insertDataButton = new Button("Query Executor")
+    val console = new TextArea(10,100)
     listenTo(createTableButton)
     listenTo(viewTablesButton)
     listenTo(insertDataButton)
@@ -33,6 +34,7 @@ class MainScreenPanel {
     add(createTableButton,constraints(0,1,gridwidth=2, fill=GridBagPanel.Fill.Horizontal))
     add(viewTablesButton,constraints(3,1,gridwidth=2, fill=GridBagPanel.Fill.Horizontal))
     add(insertDataButton,constraints(6,1,gridwidth=2, fill=GridBagPanel.Fill.Horizontal))
+    add(console,constraints(0,10,gridwidth = 100,gridheight = 100,fill=GridBagPanel.Fill.Horizontal))
 
 
     reactions+={
@@ -44,11 +46,19 @@ class MainScreenPanel {
           repaint()
           revalidate()
         }
-        if(b.text=="View Tables"){
+        else if(b.text=="View Tables"){
           println(_contents.length)
           if(_contents.length>4)
           _contents.remove(_contents.length-1)
           add(new ViewTablePanel().ReturnPanel(),constraints(0,3,gridwidth=8,gridheight = 10 ,fill=GridBagPanel.Fill.Horizontal))
+          repaint()
+          revalidate()
+        }
+        else if(b.text=="Query Executor"){
+          println(_contents.length)
+          if(_contents.length>4)
+            _contents.remove(_contents.length-1)
+          add(new InsertDataPanel().ReturnPanel(),constraints(0,3,gridwidth=8,gridheight = 10 ,fill=GridBagPanel.Fill.Horizontal))
           repaint()
           revalidate()
         }

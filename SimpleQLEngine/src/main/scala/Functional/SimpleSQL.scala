@@ -12,7 +12,7 @@ class SimpleSQL extends QueryBuilder {
   override var hashMapColumns: mutable.HashMap[String, List[String]] = _
 
   override def useMap(mapOfTableNameValues: mutable.HashMap[String, List[List[String]]],mapOfTableNameColumns: mutable.HashMap[String, List[String]]): QueryBuilder = {
-    this.hashMapData = mapOfTableNameValues;
+    this.hashMapData = mapOfTableNameValues
     this.hashMapColumns=mapOfTableNameColumns
     this
   }
@@ -48,25 +48,35 @@ class SimpleSQL extends QueryBuilder {
 
   override def selectAll(): List[List[String]] = {
     if(columns(0)=="*"){
-      return hashMapData(tableName)
+      var lst=hashMapData(tableName)
+      lst=lst.prependedAll(List(hashMapColumns(tableName)))
+      lst
     }
     else {
       var columnIndexes=List[Int]()
       val allColumns=hashMapColumns(tableName)
-      columns.foreach((item)=>{
-        val indx=allColumns.indexOf(item)
-        if(indx!=(-1)){
+      for (columnVal <- columns){
+        val indx=allColumns.indexOf(columnVal)
+        if(indx!=(-1)){ // value exist
           columnIndexes::=indx
         }
-      })
-      return hashMapData(tableName).map(x=>columnIndexes.reverse.map((i)=> {
+      }
+//      columns.foreach((item)=>{
+//        val indx=allColumns.indexOf(item)
+//        if(indx!=(-1)){
+//          columnIndexes::=indx
+//        }
+//      })
+      var lst=hashMapData(tableName).map(x=>columnIndexes.reverse.map(i=> {
         x(i)
       }))
+      lst=lst.prependedAll(List(columns))
+      lst
     }
   }
 
   override def selectAllWithFilter(): List[List[String]] = {
-    return hashMapData(tableName)
+     hashMapData(tableName)
   }
 
 }

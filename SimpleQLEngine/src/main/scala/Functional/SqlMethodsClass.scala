@@ -18,7 +18,7 @@ object SqlMethodsClass {
     println(createTableOrThrow("Student", columnNames))
     println(processQuery("insert into Student (name,department,email) values (FarinaAli,IMcE5,farina17ali@gmail.com)"))
     println(processQuery("insert into Student (name,department,email) values (FarinaLalAli,IMcE5,farinaLal17ali@gmail.com)"))
-    val columnN = List("email","name")
+    val columnN = List("email", "name")
     println(selectAllOrThrow("Student", columnN))
     //val columns= StateObjects.tableToColMap(tableName);
     //println(StateObjects.tableToValueMap.keys)
@@ -27,25 +27,39 @@ object SqlMethodsClass {
 
   }
 
-  def selectAllOrThrow(tableName: String,columnNames: List[String])={
+  def selectAllOrThrow(tableName: String, columnNames: List[String]) = {
     val query = new SimpleSQL().useTable(tableName).inColumns(columnNames).
       useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).selectAll()
     print(query)
   }
 
+  def showTableSchema(tableName: String): Either[GeneralException,List[String]] = {
+    if(!AppUtils.isValidString(tableName) | !StateObjects.tableToColMap.contains(tableName)){
+      Left(new GeneralException("Table not found or name empty"))
+    }else {
+      //Todo : call select here in Right and return List
+      Right(StateObjects.tableToColMap(tableName))
+    }
+
+  }
+
   // adding error handling
   def createTableOrThrow(tableName: String, columnNames: List[String]): Either[GeneralException, String] = {
     println("is valid ", AppUtils.isValidString(tableName))
-    if (AppUtils.isValidString(tableName)) {
+    if (!AppUtils.isValidString(tableName)) {
+      Left(new GeneralException("Table name empty or null"))
+    }
+    else if (columnNames == null || columnNames.size == 0) {
+      Left(new GeneralException("Adding column names mandatory"))
+    }else{
       val tableStudent = new CreateTable(tableName, columnNames)
-      val mapCreated = tableStudent.create();
+      val mapCreated = tableStudent.create()
       println(mapCreated) // map of table name and columns
       Right("Table is successfully created!")
     }
-    else Left(new GeneralException("Table name empty or null"))
   }
 
-  def insertValueOrThrow(tableName: String, colNames: List[String], values: List[String]): Either[GeneralException, String] = {
+  private def insertValueOrThrow(tableName: String, colNames: List[String], values: List[String]): Either[GeneralException, String] = {
     // let values be
     if (AppUtils.isValidString(tableName) && colNames.size > 0 && values.size > 0 && colNames.size == values.size) {
       val query = new SimpleSQL().useTable(tableName).inColumns(colNames).withValues(values).

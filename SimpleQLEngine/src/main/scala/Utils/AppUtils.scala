@@ -30,4 +30,16 @@ object AppUtils {
     }
   }
 
+  def patrn(z: Option[String]) = z match
+  {
+
+    // for 'Some' class the key for
+    // the given value is displayed
+    case Some(s) => (s)
+
+    // for 'None' class the below string
+    // is displayed
+    case None => ("key not found")
+  }
+
 }
