@@ -3,6 +3,7 @@ package UI
 import java.awt.Color
 
 import Functional.SqlMethodsClass
+import Functional.SqlMethodsClass.selectAllOrThrow
 import javax.swing.BorderFactory
 
 import scala.swing._
@@ -63,7 +64,8 @@ class ViewTablePanel {
           add(label, c2)
           val tableName = tableNameTextBox.peer.getText()
           val columnN = List("*")
-          val htmlString=SqlMethodsClass.getTableHtmlString(tableName,columnN)
+          val tableEntries=selectAllOrThrow(tableName,columnN)
+          val htmlString=SqlMethodsClass.getTableHtmlString(tableEntries)
           htmlString match {
             case Right(x) => {label.peer.setText("<html>"+x+"</html>")}
             case Left(x) =>  label.peer.setText(x.getMessage)

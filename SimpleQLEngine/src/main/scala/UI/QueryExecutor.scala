@@ -3,11 +3,13 @@ package UI
 import java.awt.Color
 
 import Functional.SqlMethodsClass
+import Functional.SqlMethodsClass.selectAllOrThrow
+import Utils.AppUtils
 import javax.swing.BorderFactory
 
 import scala.swing._
 
-class InsertDataPanel {
+class QueryExecutor {
   val panel = new GridBagPanel {
     def constraints(x: Int, y: Int,
                     gridwidth: Int = 1, gridheight: Int = 1,
@@ -50,11 +52,31 @@ class InsertDataPanel {
           c2.weightx = 0.5
           add(label, c2)
           val query = queryBox.peer.getText()
-          label.peer.setText(query)
+          //label.peer.setText(query)
           columnEntryPanel.rows=columnEntryPanel.rows+1
           columnEntryPanel.contents.addOne(label)
-          val output=SqlMethodsClass.processInsertOrThrow(query)
-          println(output)
+          val identifier =AppUtils.extractKeywordFromQuery(query)
+          identifier match {
+            case Right(x) => {
+              // if match and query allowed
+              if(x.equalsIgnoreCase("insert") || x.equalsIgnoreCase("delete")){
+                val answer=SqlMethodsClass.processQuery(query)
+                answer match {
+                  case Right(x) => label.peer.setText(x)
+                  case Left(x) => label.peer.setText(x.getMessage)
+                }
+              }else{
+                //select query
+                val tableEntries= SqlMethodsClass.processSelectOrThrow(query)
+                val htmlString=SqlMethodsClass.getTableHtmlString(tableEntries)
+                htmlString match {
+                  case Right(x) => {label.peer.setText("<html>"+x+"</html>")}
+                  case Left(x) =>  label.peer.setText(x.getMessage)
+                }
+              }
+            }
+            case Left(x) => label.peer.setText(x.getMessage)
+          }
         }
         if (b.text == "Remove Column") {
           val columnCount = columnEntryPanel.contents.length

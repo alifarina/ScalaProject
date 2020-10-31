@@ -24,8 +24,8 @@ object AppUtils {
     val queryIdentifier = queryParts(0)
     queryIdentifier match {
       case "insert" | "INSERT" => Right("insert")
-      case "select" | "SELECT" => Right("insert")
-      case "delete" | "DELETE" => Right("insert")
+      case "select" | "SELECT" => Right("select")
+      case "delete" | "DELETE" => Right("delete")
       case _ => Left(new GeneralException("Not supported currently"))
     }
   }
@@ -40,6 +40,27 @@ object AppUtils {
     // for 'None' class the below string
     // is displayed
     case None => ("key not found")
+  }
+
+  def returnTableHtml(tableEntries: List[List[String]]): String = {
+    var htmlString = new StringBuilder("")
+    htmlString.append("<table border='5'>")
+    var index = 0
+    for (row <- tableEntries) {
+      htmlString.append("<tr>")
+      for (col <- row) {
+        if (index == 0) {
+          htmlString.append("<th>" + col + "</th>")
+        }
+        else {
+          htmlString.append("<td>" + col + "</td>")
+        }
+      }
+      htmlString.append("</tr>")
+      index = index + 1
+    }
+    htmlString.append("</table>")
+    htmlString.toString()
   }
 
 }

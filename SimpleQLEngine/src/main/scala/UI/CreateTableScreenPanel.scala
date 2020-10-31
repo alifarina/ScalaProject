@@ -5,6 +5,7 @@ import java.util
 
 import Functional.SqlMethodsClass
 import Functional.SqlMethodsClass.processQuery
+import Utils.AppUtils
 import javax.swing.BorderFactory
 
 import scala.swing.{TextField, _}
@@ -70,7 +71,9 @@ class CreateTableScreenPanel {
         }else if(b.text == "CREATE"){
           val tabelName =tableNameTextBox.peer.getText()
          addColumnsList.forEach(tf => {
-           columnNames::=tf.peer.getText()
+           if(AppUtils.isValidString(tf.peer.getText())){
+             columnNames::=tf.peer.getText()
+           }
          })
           println("All added columns >>> ",columnNames)
          val result=SqlMethodsClass.createTableOrThrow(tabelName, columnNames.reverse)
