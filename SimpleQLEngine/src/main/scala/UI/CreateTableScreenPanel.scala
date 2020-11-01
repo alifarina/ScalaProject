@@ -66,8 +66,13 @@ class CreateTableScreenPanel {
         else if (b.text == "Remove Column") {
           val columnCount = columnEntryPanel.contents.length
           columnEntryPanel.rows=columnEntryPanel.rows-1
-          columnEntryPanel.contents.remove(columnCount - 1)
+          if (columnEntryPanel.contents.size>0) {
+            columnEntryPanel.contents.remove(columnCount - 1)
+            addColumnsList.remove(addColumnsList.size()-1)
+          }
+
         }else if(b.text == "CREATE"){
+          columnNames = List[String]()
           val tableName =tableNameTextBox.peer.getText()
          addColumnsList.forEach(tf => {
            if(AppUtils.isValidString(tf.peer.getText())){

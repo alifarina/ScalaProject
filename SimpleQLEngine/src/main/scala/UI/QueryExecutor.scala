@@ -63,7 +63,8 @@ class QueryExecutor {
           identifier match {
             case Right(x) => {
               // if match and query allowed
-              if(x.equalsIgnoreCase("insert") || x.equalsIgnoreCase("delete") || x.equalsIgnoreCase("drop")){
+              if(x.equalsIgnoreCase("insert") || x.equalsIgnoreCase("delete")
+                || x.equalsIgnoreCase("drop")){
                 val answer=SqlMethodsClass.processQuery(query)
                 answer match {
                   case Right(x) => label.peer.setText(x)
@@ -72,10 +73,15 @@ class QueryExecutor {
               }else{
                 //select query
                 val tableEntries= SqlMethodsClass.processSelectOrThrow(query)
-                val htmlString=SqlMethodsClass.getTableHtmlString(tableEntries)
-                htmlString match {
-                  case Right(x) => {label.peer.setText("<html>"+x+"</html>")}
-                  case Left(x) =>  label.peer.setText(x.getMessage)
+                tableEntries match {
+                  case Right(x) =>{
+                    val htmlString=SqlMethodsClass.getTableHtmlString(tableEntries)
+                    htmlString match {
+                      case Right(x) => {label.peer.setText("<html>"+x+"</html>")}
+                      case Left(x) =>  label.peer.setText(x.getMessage)
+                    }
+                  }
+                  case Left(x) =>label.peer.setText(x.getMessage)
                 }
               }
             }

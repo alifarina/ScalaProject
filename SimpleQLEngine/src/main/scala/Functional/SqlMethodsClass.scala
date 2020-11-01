@@ -83,29 +83,39 @@ object SqlMethodsClass {
   }
   def dropTableOrThrow(query: String): Either[GeneralException, String] ={
     val splittedQuery=query.split(" ")
-    val qSize=splittedQuery.size
-    val tableName=splittedQuery(qSize-1)
-    val querySuccess = new SimpleSQL().useTable(tableName).
-      useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).drop()
-    if(querySuccess){
-      Right(Constants.TableDropped)
-    }
-    else{
-      Left(new GeneralException(Constants.QueryFailed))
-    }
+   if(splittedQuery.size!=3){
+     Left(new GeneralException(Constants.QueryFailed))
+   }else if(!AppUtils.isValidString(splittedQuery(2))){
+     Left(new GeneralException(Constants.QueryFailed))
+   }else{
+     val querySuccess = new SimpleSQL().useTable(splittedQuery(2)).
+       useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).drop()
+     if(querySuccess){
+       Right(Constants.TableDropped)
+     }
+     else{
+       Left(new GeneralException(Constants.QueryFailed))
+     }
+   }
+
   }
   def deleteTableAllRowsOrThrow(query: String): Either[GeneralException, String] ={
     val splittedQuery=query.split(" ")
-    val qSize=splittedQuery.size
-    val tableName=splittedQuery(qSize-1)
-    val querySuccess = new SimpleSQL().useTable(tableName).
-      useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).deleteAll()
-    if(querySuccess){
-      Right(Constants.TableDataDeleted)
-    }
-    else{
+    if(splittedQuery.size!=3){
       Left(new GeneralException(Constants.QueryFailed))
+    }else if(!AppUtils.isValidString(splittedQuery(2))){
+      Left(new GeneralException(Constants.QueryFailed))
+    }else{
+      val querySuccess = new SimpleSQL().useTable(splittedQuery(2)).
+        useMap(StateObjects.tableToValueMap, StateObjects.tableToColMap).deleteAll()
+      if(querySuccess){
+        Right(Constants.TableDataDeleted)
+      }
+      else{
+        Left(new GeneralException(Constants.QueryFailed))
+      }
     }
+
   }
   // adding error handling
   def createTableOrThrow(tableName: String, columnNames: List[String]): Either[GeneralException, String] = {
@@ -149,7 +159,12 @@ object SqlMethodsClass {
     val keyword = AppUtils.extractKeywordFromQuery(query, 0)
     keyword match {
       case "insert" | "INSERT" => processInsertOrThrow(query)
-      case "delete" | "DELETE" => deleteTableAllRowsOrThrow(query)
+      case "delete" | "DELETE" => {
+        if(query.contains("where")){
+          Left(new GeneralException(Constants.QueryNotSupported))
+        }else{
+          deleteTableAllRowsOrThrow(query)
+        }}
       case "drop" | "DROP" => dropTableOrThrow(query)
       case _ => Left(new GeneralException("Not supported yet!"))
     }
@@ -176,11 +191,18 @@ object SqlMethodsClass {
   }
 
   def processSelectOrThrow(query: String): Either[GeneralException, List[List[String]]] = {
-    val tableName = AppUtils.extractKeywordFromQuery(query, 3)
-    val columnsArray = AppUtils.extractKeywordFromQuery(query, 1)
-      .replace("(", "").replace(")", "").split(",")
-    println(tableName, "cols", columnsArray.toList, "values")
-    selectAllOrThrow(tableName, columnsArray.toList)
+    if(query.split(" ").size<4){
+      Left(new GeneralException(Constants.QueryFailed))
+    }else if ( query.toLowerCase().contains("as") || query.toLowerCase().contains("join")){
+      Left(new GeneralException(Constants.QueryNotSupported))
+    }else{
+      val tableName = AppUtils.extractKeywordFromQuery(query, 3)
+      val columnsArray = AppUtils.extractKeywordFromQuery(query, 1)
+        .replace("(", "").replace(")", "").split(",")
+      println(tableName, "cols", columnsArray.toList, "values")
+      selectAllOrThrow(tableName, columnsArray.toList)
+    }
+
   }
 
 
