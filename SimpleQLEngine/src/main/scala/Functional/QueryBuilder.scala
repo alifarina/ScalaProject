@@ -19,6 +19,10 @@ abstract class QueryBuilder {
 
   def add() : Boolean
 
+  def drop() : Boolean
+
+  def deleteAll() : Boolean
+
   def selectAll():List[List[String]]
 
   def selectAllWithFilter():List[List[String]]

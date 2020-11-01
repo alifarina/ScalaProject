@@ -1,5 +1,7 @@
 package Functional
 
+import Common.Constants
+
 import scala.collection.mutable
 
 
@@ -45,12 +47,48 @@ class SimpleSQL extends QueryBuilder {
     println(hashMapData)
     true
   }
-
+  override def deleteAll(): Boolean = {
+    //    val valueMap = new mutable.HashMap[String, List[List[String]]]()
+    if(hashMapData.size>=1) {
+      try{
+        hashMapData(tableName) = List()
+        true
+      }
+      catch {
+        case _ =>false
+      }
+    }
+    else{
+      false
+    }
+  }
+  override def drop(): Boolean = {
+      try{
+        hashMapData.remove(tableName)
+        hashMapColumns.remove(tableName)
+        true
+      }
+      catch {
+        case _ =>false
+      }
+  }
   override def selectAll(): List[List[String]] = {
     if(columns(0)=="*"){
-      var lst=hashMapData(tableName)
-      lst=lst.prependedAll(List(hashMapColumns(tableName)))
-      lst
+      if(hashMapData.size==0){
+        var lst=List(List(Constants.NoData))
+        lst=lst.prependedAll(List(hashMapColumns(tableName)))
+        lst
+      }
+      else if(hashMapData(tableName)==null || hashMapData(tableName).size==0){
+        var lst=List(List(Constants.NoData))
+        lst=lst.prependedAll(List(hashMapColumns(tableName)))
+        lst
+      }
+      else{
+        var lst=hashMapData(tableName)
+        lst=lst.prependedAll(List(hashMapColumns(tableName)))
+        lst
+      }
     }
     else {
       var columnIndexes=List[Int]()
@@ -67,11 +105,19 @@ class SimpleSQL extends QueryBuilder {
 //          columnIndexes::=indx
 //        }
 //      })
-      var lst=hashMapData(tableName).map(x=>columnIndexes.reverse.map(i=> {
-        x(i)
-      }))
-      lst=lst.prependedAll(List(columns))
-      lst
+      if(hashMapData.size>0){
+        var lst=hashMapData(tableName).map(x=>columnIndexes.reverse.map(i=> {
+          x(i)
+        }))
+        lst=lst.prependedAll(List(columns))
+        lst
+      }
+      else{
+        var lst=List(List(Constants.NoData))
+        lst=lst.prependedAll(List(columns))
+        lst
+      }
+
     }
   }
 

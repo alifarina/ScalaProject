@@ -3,7 +3,6 @@ package UI
 import java.awt.Color
 
 import Functional.SqlMethodsClass
-import Functional.SqlMethodsClass.selectAllOrThrow
 import Utils.AppUtils
 import javax.swing.BorderFactory
 
@@ -43,6 +42,11 @@ class QueryExecutor {
     add(columnEntryPanel, constraints(0, 5, gridwidth = 1, gridheight = 4, fill = GridBagPanel.Fill.Horizontal))
     reactions += {
       case event.ButtonClicked(b) =>
+        val items=columnEntryPanel.contents.size
+        for(i<-Range(0,items)){
+          columnEntryPanel.contents.remove(i)
+        }
+        columnEntryPanel.rows=1
         if (b.text == "Execute >") {
           val label = new Label("Count: ")
 
@@ -59,7 +63,7 @@ class QueryExecutor {
           identifier match {
             case Right(x) => {
               // if match and query allowed
-              if(x.equalsIgnoreCase("insert") || x.equalsIgnoreCase("delete")){
+              if(x.equalsIgnoreCase("insert") || x.equalsIgnoreCase("delete") || x.equalsIgnoreCase("drop")){
                 val answer=SqlMethodsClass.processQuery(query)
                 answer match {
                   case Right(x) => label.peer.setText(x)

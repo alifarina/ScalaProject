@@ -1,6 +1,9 @@
 package Utils
 
+import Common.Constants
 import Errors.GeneralException
+
+import scala.util.control.Breaks.{break, breakable}
 
 object AppUtils {
 
@@ -26,12 +29,12 @@ object AppUtils {
       case "insert" | "INSERT" => Right("insert")
       case "select" | "SELECT" => Right("select")
       case "delete" | "DELETE" => Right("delete")
-      case _ => Left(new GeneralException("Not supported currently"))
+      case "drop" | "DROP" => Right("drop")
+      case _ => Left(new GeneralException(Constants.QueryNotSupported))
     }
   }
 
-  def patrn(z: Option[String]) = z match
-  {
+  def patrn(z: Option[String]) = z match {
 
     // for 'Some' class the key for
     // the given value is displayed
@@ -46,14 +49,22 @@ object AppUtils {
     var htmlString = new StringBuilder("")
     htmlString.append("<table border='5'>")
     var index = 0
+    var headerColumnsLength=0
     for (row <- tableEntries) {
+      if(headerColumnsLength==0)headerColumnsLength=row.size
       htmlString.append("<tr>")
       for (col <- row) {
         if (index == 0) {
           htmlString.append("<th>" + col + "</th>")
         }
         else {
-          htmlString.append("<td>" + col + "</td>")
+          if(col==Constants.NoData){
+            htmlString.append("<td colspan='"+headerColumnsLength+"'>" + col + "</td>")
+          }
+          else{
+            htmlString.append("<td>" + col + "</td>")
+          }
+
         }
       }
       htmlString.append("</tr>")
@@ -62,5 +73,73 @@ object AppUtils {
     htmlString.append("</table>")
     htmlString.toString()
   }
+
+  def returnInfoFromInsertQuery(query: String):Tuple3[String,List[String],List[String]] = {
+    val totalLengthOfQuery=query.size
+    var charArray = query.substring(11,totalLengthOfQuery).toCharArray()
+    var values=List[String]()
+    var columns=List[String]()
+    var tableNameBuilder=new StringBuilder()
+    var tableNameFilled = false
+    var start = false
+    var tableName=""
+    var value = new StringBuilder()
+    var quotestart = false
+    var columnsPushed = false
+
+    for (c <- charArray) {
+    {
+      breakable
+      {
+        if (!tableNameFilled) {
+          if (c!='(') tableNameBuilder.append(c)
+        }
+        if (c=='(') {
+          if(tableNameFilled==false)
+          {
+            tableName = rtrim(ltrim(tableNameBuilder.toString().trim()))
+            tableNameFilled = true
+          }
+          start = true
+          break
+        }
+        if (c==')') {
+          if (!columnsPushed) columns::=value.toString().trim()
+          else values::=value.toString().trim()
+          value = new StringBuilder()
+          columnsPushed = true
+          start = false
+          break
+
+        }
+        if ((c=='"') && (quotestart==true)) {
+          quotestart = false
+          break
+
+        }
+        if (c=='"') {
+          quotestart = true
+          break
+
+        }
+        if ((c==',') && (quotestart==false)) {
+          if (!columnsPushed) columns::=value.toString().trim()
+          else values::=value.toString().trim()
+          value = new StringBuilder()
+          break
+
+        }
+        if (start==true) value.append(c)
+      }
+    }
+    }
+    val tp=new Tuple3[String,List[String],List[String]](tableName,columns.reverse,values.reverse)
+    tp
+//    Console.println("columns="+columns.reverse.mkString(","))
+//    Console.println("values="+values.reverse.mkString(","))
+//    Console.println("table name="+tableName)
+  }
+  def ltrim(s: String) = s.replaceAll("^\\s+", "")
+  def rtrim(s: String) = s.replaceAll("\\s+$", "")
 
 }

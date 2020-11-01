@@ -4,7 +4,6 @@ import java.awt.Color
 import java.util
 
 import Functional.SqlMethodsClass
-import Functional.SqlMethodsClass.processQuery
 import Utils.AppUtils
 import javax.swing.BorderFactory
 
@@ -69,18 +68,18 @@ class CreateTableScreenPanel {
           columnEntryPanel.rows=columnEntryPanel.rows-1
           columnEntryPanel.contents.remove(columnCount - 1)
         }else if(b.text == "CREATE"){
-          val tabelName =tableNameTextBox.peer.getText()
+          val tableName =tableNameTextBox.peer.getText()
          addColumnsList.forEach(tf => {
            if(AppUtils.isValidString(tf.peer.getText())){
              columnNames::=tf.peer.getText()
            }
          })
           println("All added columns >>> ",columnNames)
-         val result=SqlMethodsClass.createTableOrThrow(tabelName, columnNames.reverse)
+         val result=SqlMethodsClass.createTableOrThrow(tableName, columnNames.reverse)
            result match {
              case Right(x) => {errorView.peer.setText(x)
-               println(processQuery("insert into Student (name,department,email) values (FarinaAli,IMcE5,farina17ali@gmail.com)"))
-               println(processQuery("insert into Student (name,department,email) values (FarinaLalAli,IMcE5,farinaLal17ali@gmail.com)"))
+            //   println(processQuery("insert into "+tableName+" (name,department,email) values (FarinaAli,IMcE5,farina17ali@gmail.com)"))
+            //   println(processQuery("insert into "+tableName+" (name,department,email) values (FarinaLalAli,IMcE5,farinaLal17ali@gmail.com)"))
              }
              case Left(x) =>  errorView.peer.setText(x.getMessage)
            }
