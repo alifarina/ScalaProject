@@ -7,7 +7,7 @@ We have used Hashmaps for keeping table name and colums data, where table name i
 ### Create table view
 ![Screenshot](images/create_table.png)
 
-We can enter table naame and column names, it then creates the hashmap as described above. This hashmap can hold multiple table -> column mappings
+We can enter table name and column names, it then creates the hashmap as described above. This hashmap can hold multiple table -> column mappings
 
 ### View Table 
 ![Screenshot](images/view_table.png)
@@ -15,11 +15,22 @@ We can enter table naame and column names, it then creates the hashmap as descri
 ### Execute Queries 
 ![Screenshot](images/table_data.png)
 
-we can execute the follwing queries
-- Insert
-- Select
-- Delete
-- Drop
+### we can execute the follwing queries
+- Insert<br/>
+General insert query 
+
+- Select<br/>
+Supported :<br/>
+Select * from tableName<br/>
+Select colms from tableName<br/>
+Not supported : "JOINS", "WHERE" and "AS"
+ 
+- Delete<br/>
+Suppoted : Delete from tableName<br/>
+Not supported : "WHERE" clause
+ 
+- Drop<br/>
+Drop from tableName
 
 ## Scala concepts utilized in the project
 ### Either | Dysjunction
@@ -39,7 +50,9 @@ for(i <- list) yield {}
 In scala we don't have the concept of static so for the purpose of using global constants we created a Object class. 
 
 ### Concept of Abstract class and overriding it to personalize queries
+Created an abstract class for query builder and used that to create queries. 
 
 ### Operations on collection classes (List , Hashmaps, Arrays)
+Learned syntaxes using HashMaps, List etc, adding and removing values from them
 
 ### UI by swing library 
