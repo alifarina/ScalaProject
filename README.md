@@ -10,7 +10,7 @@ We have used Hashmaps for keeping table name and colums data, where table name i
 We can enter table name and column names, it then creates the hashmap as described above. This hashmap can hold multiple table -> column mappings
 
 ### View Table 
-![Screenshot](images/view_table.png)
+![Screenshot](images/view_table_u.png)
 
 ### Execute Queries 
 ![Screenshot](images/table_data.png)
