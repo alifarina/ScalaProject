@@ -6,12 +6,15 @@ abstract class QueryBuilder {
 
   var tableName: String
   var columns: List[String]
+  var filterColumns: List[String]
   var values: List[String]
   var hashMapData: mutable.HashMap[String, List[List[String]]]
   var hashMapColumns:mutable.HashMap[String, List[String]]
   def useTable(tableName: String): QueryBuilder
 
   def inColumns(columns: List[String]): QueryBuilder
+
+  def filterColumns(columns: List[String]): QueryBuilder
 
   def withValues(topping: List[String]): QueryBuilder
 
@@ -25,6 +28,6 @@ abstract class QueryBuilder {
 
   def selectAll():List[List[String]]
 
-  def selectAllWithFilter():List[List[String]]
+  def filterData(data:List[List[String]]):List[List[String]]
 
 }

@@ -3,6 +3,7 @@ package UI
 import java.awt.Color
 import java.util
 
+import Common.Constants
 import Functional.SqlMethodsClass
 import Utils.AppUtils
 import javax.swing.BorderFactory
@@ -57,13 +58,13 @@ class CreateTableScreenPanel {
     add(columnEntryPanel, constraints(0, 5, gridwidth = 5, gridheight = 4, fill = GridBagPanel.Fill.Both,ipadx = 5))
     reactions += {
       case event.ButtonClicked(b) =>
-        if (b.text == "Add Column") {
+        if (b.text == Constants.AddColumn) {
           val textCoumnName = new TextField(30)
           addColumnsList.add(textCoumnName)
           columnEntryPanel.rows=columnEntryPanel.rows+1
           columnEntryPanel.contents.addOne(textCoumnName)
         }
-        else if (b.text == "Remove Column") {
+        else if (b.text == Constants.RemoveColumn) {
           val columnCount = columnEntryPanel.contents.length
           columnEntryPanel.rows=columnEntryPanel.rows-1
           if (columnEntryPanel.contents.size>0) {
@@ -76,7 +77,7 @@ class CreateTableScreenPanel {
           val tableName =tableNameTextBox.peer.getText()
          addColumnsList.forEach(tf => {
            if(AppUtils.isValidString(tf.peer.getText())){
-             columnNames::=tf.peer.getText()
+             columnNames::=tf.peer.getText().toLowerCase()
            }
          })
           println("All added columns >>> ",columnNames)

@@ -84,6 +84,7 @@ class ViewTablePanel {
           //val tableName = tableNameTextBox.peer.getText()
           val tableName = tableNamesDropdown.peer.getSelectedItem.toString
           val columnN = List("*")
+
           val tableEntries = selectAllOrThrow(tableName, columnN)
           val htmlString = SqlMethodsClass.getTableHtmlString(tableEntries)
           htmlString match {

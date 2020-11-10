@@ -104,7 +104,7 @@ object AppUtils {
           break
         }
         if (c==')') {
-          if (!columnsPushed) columns::=value.toString().trim()
+          if (!columnsPushed) columns::=value.toString().trim().toLowerCase()
           else values::=value.toString().trim()
           value = new StringBuilder()
           columnsPushed = true
@@ -142,4 +142,10 @@ object AppUtils {
   def ltrim(s: String) = s.replaceAll("^\\s+", "")
   def rtrim(s: String) = s.replaceAll("\\s+$", "")
 
+  val IntRegEx = "(\\d+)".r
+  def getStringIntValueOrSize(s:String): Option[Int]  = s match {
+    case "inf" => Some(Integer.MAX_VALUE)
+    case IntRegEx(num) => Some(num.toInt)
+    case _ => Some(s.size)
+  }
 }

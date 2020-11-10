@@ -7,4 +7,6 @@ object Constants {
   final val TableDataDeleted = "Table Data Deleted Successfully"
   final val QueryFailed = "Query Failed to execute"
   final val QueryNotSupported="Not supported currently"
+  final val RemoveColumn="Remove Column"
+  final val AddColumn="Add Column"
 }
