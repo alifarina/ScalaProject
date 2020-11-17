@@ -1,10 +1,12 @@
 package UI
 
+import Common.Constants
+
 import scala.swing._
 
 class MainScreen {
   var screen: Frame = new Frame {
-    title = "Hello world"
+    title = Constants.ProjectTitle
 //    contents = new FlowPanel {
 //      contents += new Label("Launch rainbows:")
 //      contents += new Button("Click me") {
@@ -22,7 +24,7 @@ class MainScreen {
     open()
   }
   def returnFrame():Frame={
-    return screen
+    screen
   }
   def openScreen(): Unit = {
     screen.open()

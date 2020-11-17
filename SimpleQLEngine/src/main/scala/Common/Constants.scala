@@ -9,4 +9,5 @@ object Constants {
   final val QueryNotSupported="Not supported currently"
   final val RemoveColumn="Remove Column"
   final val AddColumn="Add Column"
+  final val ProjectTitle="Simple Sql Engine"
 }
